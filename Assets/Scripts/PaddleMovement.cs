@@ -17,13 +17,12 @@ public class PaddleMovement : MonoBehaviour {
             initialYPosition);
     }
 
-    // Called when loaded
-    protected void Awake() {
+    // Called before first frame
+    protected void Start() {
         paddleRB = gameObject.GetComponent<Rigidbody2D>();
 
-        /* Set the vertical velocity vector using movementSpeed. Time.deltaTime 
-        allows for speed to stay the same given different frame rates */
-        verticalVelocity = new Vector2(0, movementSpeed * Time.deltaTime);
+        
+        //verticalVelocity = new Vector2(0, movementSpeed * Time.deltaTime);
 
         // Set up the ceiling and floor position vectors
         float xPositition = gameObject.transform.position.x;
@@ -42,5 +41,11 @@ public class PaddleMovement : MonoBehaviour {
     protected void StopMoving() {
         // Set the velocity to 0
         paddleRB.velocity = Vector2.zero;
+    }
+
+    /* Set the vertical velocity vector using movementSpeed. Time.deltaTime 
+    allows for speed to stay the same given different frame rates */
+    protected void UpdateVelocity() {
+        verticalVelocity = new Vector2(0, movementSpeed * Time.deltaTime);
     }
 }

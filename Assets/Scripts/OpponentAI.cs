@@ -5,14 +5,10 @@ using UnityEngine;
 public class OpponentAI : PaddleMovement {
     public GameObject ball;
 
-    // Called once loaded
-    private void Start() {
-        // Set GameManager settings
-        GameManager.instance.opponentAIScript = this;
-    }
-
     // Using FixedUpdate() instead of Update() since we are manipulating physics
     private void FixedUpdate() {
+        UpdateVelocity();
+
         Debug.Log(paddleRB.velocity.ToString());
 
         // Check if the ball is above the paddle

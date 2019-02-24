@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BallMovement : MonoBehaviour {
+    public GameManager gameManager;
     public float initialXVelocity;
     public float initialYVelocity;
     public float initialXPosition;
@@ -27,9 +28,6 @@ public class BallMovement : MonoBehaviour {
 
     // Start is called before the first frame update
     private void Start() {
-        // Sets the GameManagers ball to this
-        GameManager.instance.ballMovementScript = this;
-
         // Get the rigidbody attached to this
         ballRB = gameObject.GetComponent<Rigidbody2D>();
         
@@ -42,15 +40,15 @@ public class BallMovement : MonoBehaviour {
         // Check if ball is out of bounds on left side
         if (gameObject.transform.position.x < leftBoundPosition) {
             // The ball went past the player, so opponent increases score
-            GameManager.instance.IncreaseOpponentScore();
-            GameManager.instance.NewRound();
+            gameManager.IncreaseOpponentScore();
+            gameManager.NewRound();
         }
         
         // Check if ball is out of bounds on right side
         if (gameObject.transform.position.x > rightBoundPosition) {
             // The ball went past the opponent, so player increases score
-            GameManager.instance.IncreasePlayerScore();
-            GameManager.instance.NewRound();
+            gameManager.IncreasePlayerScore();
+            gameManager.NewRound();
         }
     }
 

@@ -1,31 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
-    public static GameManager instance = null;
     public BallMovement ballMovementScript;
     public PlayerMovement playerMovementScript;
     public OpponentAI opponentAIScript;
 
     private int playerScore;
     private int opponentScore;
-
-    // Gets called when GameManager is loaded
-    private void Awake() {
-        // Sets the static instance of the manager to 'this' if not already set
-        if (instance == null) {
-            instance = this;
-            // Prevent this from getting destroyed
-            DontDestroyOnLoad(gameObject);
-        }
-        else {
-            // There is already a manager. Leave it alone and destroy this
-            Destroy(gameObject);
-        }
-
-        instance.ResetScores();
-    }
 
     public void IncreasePlayerScore() {
         playerScore++;
@@ -45,9 +29,18 @@ public class GameManager : MonoBehaviour {
     }
 
     public void NewRound() {
-        // Reset the ball and opponent. Feels weird to reset player
         ballMovementScript.ResetBall();
-        //playerMovementScript.Reset();
-        opponentAIScript.ResetPaddle();
+    }
+
+    private void LoadMenu() {
+        // Load the Main_Menu scene. This results in lost progress.
+        SceneManager.LoadScene("Main_Menu");
+    }
+
+    private void Update() {
+        // Check if 'esc' is pressed
+        if (Input.GetKey("escape")) {
+            LoadMenu();
+        }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Score : MonoBehaviour {
+    public GameManager gameManager;
     public GameObject playerScore;
     public GameObject opponentScore;
 
@@ -20,7 +21,7 @@ public class Score : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         // Update the scores
-        Vector2 scores = GameManager.instance.GetScores();
+        Vector2 scores = gameManager.GetScores();
         playerScoreText.text = scores.x.ToString();
         opponentScoreText.text = scores.y.ToString();
     }
