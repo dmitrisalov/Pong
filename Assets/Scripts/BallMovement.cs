@@ -4,74 +4,67 @@ using UnityEngine;
 
 public class BallMovement : MonoBehaviour {
     public GameManager gameManager;
+    public Camera cam;
     public float initialXVelocity;
     public float initialYVelocity;
-    public float initialXPosition;
-    public float initialYPosition;
-    public float leftBoundPosition;
-    public float rightBoundPosition;
+    public float leftBoundPosition;     // Ball resets at this point
+    public float rightBoundPosition;    // Ball resets at this point
 
-    private Rigidbody2D ballRB;
+    private Transform ball;
+    private Vector2 initialPosition;
     private float currentXVelocity;     // This keeps track of x direction
     private float currentYVelocity;     // This keeps track of y direction
-
-    public void ResetBall() {
-        // Reset the ball to the initial position
-        gameObject.transform.position = new Vector2(initialXPosition, 
-            initialYPosition);
-
-        // Reset velocity to the initial velocity
-        currentXVelocity = initialXVelocity;
-        currentYVelocity = initialYVelocity;
-        ballRB.velocity = UpdatedVelocityVector();
-    }
+    private float positiveYVelocity;    // Absolute value of Y velocity
 
     // Start is called before the first frame update
     private void Start() {
-        // Get the rigidbody attached to this
-        ballRB = gameObject.GetComponent<Rigidbody2D>();
-        
+        positiveYVelocity = Mathf.Abs(initialYVelocity);
+
+        // Get the transform component of the ball
+        ball = transform;
+        initialPosition = ball.position;
         ResetBall();
     }
 
     // Happens once per frame
     private void Update() {
+        // Check if ball hit the top of the screen
+        if (BallCollidedWithTop()) {
+            // Set Y velocity to negative
+            currentYVelocity = -positiveYVelocity;
+        }
+
+        // Check if ball hit the bottom of the screen
+        if (BallCollidedWithBottom()) {
+            // Set Y velocity to positive
+            currentYVelocity = positiveYVelocity;
+        }
+
+        // Move the ball
+        ball.Translate(UpdatedVelocity());
 
         // Check if ball is out of bounds on left side
-        if (gameObject.transform.position.x < leftBoundPosition) {
+        if (ball.position.x < leftBoundPosition) {
             // The ball went past the player, so opponent increases score
             gameManager.IncreaseOpponentScore();
             gameManager.NewRound();
         }
         
         // Check if ball is out of bounds on right side
-        if (gameObject.transform.position.x > rightBoundPosition) {
+        if (ball.position.x > rightBoundPosition) {
             // The ball went past the opponent, so player increases score
             gameManager.IncreasePlayerScore();
             gameManager.NewRound();
         }
     }
 
-    // Using FixedUpdate() because we are directly manipulating the physics
-    private void FixedUpdate() {
-        /* A bug sometimes causes the y velocity to be set to 0 at the 
-        boundaries. To fix this, we will give the ball a 'push' by resetting the
-        y velocity. */
+    public void ResetBall() {
+        // Reset the ball to the initial position
+        ball.position = initialPosition;
 
-        // Check if y velocity is 0
-        if (ballRB.velocity.y == 0) {
-            // Check if on the bottom half of the screen
-            if (gameObject.transform.position.y < 0) {
-                // Reset to positive y velocity
-                currentYVelocity = Mathf.Abs(initialYVelocity);
-            }
-            else {
-                // Reset to negative y velocity if on the top half of the screen
-                currentYVelocity = -1 * Mathf.Abs(initialYVelocity);
-            }
-
-            ballRB.velocity = UpdatedVelocityVector();
-        }
+        // Reset velocity to the initial velocity
+        currentXVelocity = initialXVelocity;
+        currentYVelocity = initialYVelocity;
     }
 
     private void OnCollisionEnter2D(Collision2D otherObject) {
@@ -81,32 +74,41 @@ public class BallMovement : MonoBehaviour {
             currentXVelocity *= -1;
 
             // Check if the ball collided with the top half of the paddle
-            if (otherObject.collider.transform.position.y < 
-                gameObject.transform.position.y) {
+            Transform paddle = otherObject.collider.transform;
+            if (paddle.position.y < ball.position.y) {
                 // Vertical velocity is set to positive
-                currentYVelocity = Mathf.Abs(currentYVelocity);
+                currentYVelocity = positiveYVelocity;
             }
+            // Check if the ball collided with the bottom half (or exact center)
             else {
-                // Ball collided with bottom half. 
                 // Vertical velocity is set to negative
-                currentYVelocity = -1 * Mathf.Abs(currentYVelocity);
+                currentYVelocity = -positiveYVelocity;
             }
+        }
+    }
 
-            // Update the balls velocity
-            ballRB.velocity = UpdatedVelocityVector();
-        }
-        // Check if ball has collided with a boundary
-        else if (otherObject.collider.tag == "Boundary") {
-            // Switch the vertical velocity and preserve horizontal velocity
-            currentYVelocity *= -1;
-            ballRB.velocity = UpdatedVelocityVector();
-        }
+    private bool BallCollidedWithTop() {
+        // Calculate the position of the top edge of the ball
+        float topEdge = ball.position.y + (ball.localScale.y / 2f);
+        Vector2 topEdgePosition = new Vector2(0, topEdge);
+
+        // Return true if the screen position of the ball is at the top
+        return cam.WorldToScreenPoint(topEdgePosition).y >= cam.pixelHeight;
+    }
+
+    private bool BallCollidedWithBottom() {
+        // Calculate the position of the bottom edge of the ball
+        float bottomEdge = ball.position.y - (ball.localScale.y / 2f);
+        Vector2 bottomEdgePosition = new Vector2(0, bottomEdge);
+
+        // Return true if the screen position of the ball is at the bottom
+        return cam.WorldToScreenPoint(bottomEdgePosition).y <= 0;
     }
 
     /* Return a new velocity vector based on currentXVelocity and
     currentYVelocity. Time.deltaTime is used to preserve speed given different
     framerates. */
-    private Vector2 UpdatedVelocityVector() {
+    private Vector2 UpdatedVelocity() {
         return new Vector2(currentXVelocity * Time.deltaTime, 
             currentYVelocity * Time.deltaTime);
     }

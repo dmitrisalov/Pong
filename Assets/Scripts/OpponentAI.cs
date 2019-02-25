@@ -3,24 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class OpponentAI : PaddleMovement {
-    public GameObject ball;
+    public Transform ball;
 
-    // Using FixedUpdate() instead of Update() since we are manipulating physics
-    private void FixedUpdate() {
-        UpdateVelocity();
-
-        Debug.Log(paddleRB.velocity.ToString());
-
+    // Runs every frame
+    private void Update() {
         // Check if the ball is above the paddle
-        if (ball.transform.position.y > gameObject.transform.position.y) {
+        if (ball.position.y > paddle.position.y) {
             MoveUp();
         }
         // Check if the ball is below the paddle
-        else if (ball.transform.position.y < gameObject.transform.position.y) {
+        else if (ball.position.y < paddle.position.y) {
             MoveDown();
-        }
-        else {
-            StopMoving();
         }
     }
 }

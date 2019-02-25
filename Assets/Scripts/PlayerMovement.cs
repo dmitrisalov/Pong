@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : PaddleMovement {
-    // Using FixedUpdate() instead of Update() since we are manipulating physics
-    private void FixedUpdate() {
-        UpdateVelocity();
-
+    // Runs every frame
+    private void Update() {
         // Check if player is pressing up
         if (Input.GetAxisRaw("Vertical") > 0) {
             MoveUp();
@@ -14,9 +12,6 @@ public class PlayerMovement : PaddleMovement {
         // Check if player is pressing down
         else if (Input.GetAxisRaw("Vertical") < 0) {
             MoveDown();
-        }
-        else {
-            StopMoving();
         }
     }
 }

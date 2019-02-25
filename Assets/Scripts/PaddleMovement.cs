@@ -3,49 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PaddleMovement : MonoBehaviour {
+    public Camera cam;
     public float movementSpeed;
     public float initialXPosition;
     public float initialYPosition;
 
-    protected Rigidbody2D paddleRB;
-    protected Vector2 verticalVelocity;
-    protected Vector2 ceilingPosition;
-    protected Vector2 floorPosition;
-
-    public void ResetPaddle() {
-        gameObject.transform.position = new Vector2(initialXPosition, 
-            initialYPosition);
-    }
+    protected Transform paddle;
+    private float currVerticalVelocity;
 
     // Called before first frame
-    protected void Start() {
-        paddleRB = gameObject.GetComponent<Rigidbody2D>();
-
-        
-        //verticalVelocity = new Vector2(0, movementSpeed * Time.deltaTime);
-
-        // Set up the ceiling and floor position vectors
-        float xPositition = gameObject.transform.position.x;
+    private void Start() {
+        // Get the transform component of the object
+        paddle = transform;
     }
 
     protected void MoveUp() {
-        // Set the velocity to vertical
-        paddleRB.velocity = verticalVelocity;
+        // Check if the paddle has NOT collided with the top
+        if (!PaddleCollidedWithTop()) {
+            // Set the velocity to vertical
+            currVerticalVelocity = movementSpeed;
+
+            // Move the paddle
+            paddle.Translate(UpdatedVelocity());
+        }
     }
 
     protected void MoveDown() {
-        // Set the velocity to negative vertical
-        paddleRB.velocity = -verticalVelocity;
+        // Check if the paddle has NOT collided with the bottom
+        if (!PaddleCollidedWithBottom()) {
+            // Set the velocity to vertical
+            currVerticalVelocity = -movementSpeed;
+
+            // Move the paddle
+            paddle.Translate(UpdatedVelocity());
+        }
     }
 
-    protected void StopMoving() {
-        // Set the velocity to 0
-        paddleRB.velocity = Vector2.zero;
+    private bool PaddleCollidedWithTop() {
+        // Calculate the position of the top edge of the ball
+        float topEdge = paddle.position.y + (paddle.localScale.y / 2f);
+        Vector2 topEdgePosition = new Vector2(0, topEdge);
+
+        // Return true if the screen position of the ball is at the top
+        return cam.WorldToScreenPoint(topEdgePosition).y >= cam.pixelHeight;
+    }
+
+    private bool PaddleCollidedWithBottom() {
+        // Calculate the position of the top edge of the ball
+        float bottomEdge = paddle.position.y - (paddle.localScale.y / 2f);
+        Vector2 bottomEdgePosition = new Vector2(0, bottomEdge);
+
+        // Return true if the screen position of the ball is at the top
+        return cam.WorldToScreenPoint(bottomEdgePosition).y <= 0;
     }
 
     /* Set the vertical velocity vector using movementSpeed. Time.deltaTime 
     allows for speed to stay the same given different frame rates */
-    protected void UpdateVelocity() {
-        verticalVelocity = new Vector2(0, movementSpeed * Time.deltaTime);
+    private Vector2 UpdatedVelocity() {
+        return new Vector2(0, currVerticalVelocity * Time.deltaTime);
     }
 }
+
