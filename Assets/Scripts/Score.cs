@@ -4,25 +4,30 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Score : MonoBehaviour {
-    public GameManager gameManager;
-    public GameObject playerScore;
-    public GameObject opponentScore;
-
-    private Text playerScoreText;
-    private Text opponentScoreText;
+    private Text scoreText;
+    private int score = 0;
 
     // Start is called before the first frame update
     void Start() {
-        // Get the text components for the scores
-        playerScoreText = playerScore.GetComponent<Text>();
-        opponentScoreText = opponentScore.GetComponent<Text>();
+        // Get the text component for the scores
+        scoreText = GetComponent<Text>();
     }
 
-    // Update is called once per frame
-    void Update() {
-        // Update the scores
-        Vector2 scores = gameManager.GetScores();
-        playerScoreText.text = scores.x.ToString();
-        opponentScoreText.text = scores.y.ToString();
+    public void Increase() {
+        score++;
+
+        // Update the display
+        scoreText.text = score.ToString();
+    }
+
+    public void Reset() {
+        score = 0;
+
+        // Update the display
+        scoreText.text = score.ToString();
+    }
+
+    public int GetScore() {
+        return score;
     }
 }

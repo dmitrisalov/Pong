@@ -3,19 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PaddleMovement : MonoBehaviour {
-    public Camera cam;
-    public float movementSpeed;
-    public float initialXPosition;
-    public float initialYPosition;
+    public Camera cam;      // Used for boundaries for paddles
+    public float movementSpeed = 6.75f;
 
-    protected Transform paddle;
+    private float currentSpeed;
     private float currVerticalVelocity;
-
-    // Called before first frame
-    private void Start() {
-        // Get the transform component of the object
-        paddle = transform;
-    }
 
     protected void MoveUp() {
         // Check if the paddle has NOT collided with the top
@@ -24,7 +16,7 @@ public class PaddleMovement : MonoBehaviour {
             currVerticalVelocity = movementSpeed;
 
             // Move the paddle
-            paddle.Translate(UpdatedVelocity());
+            transform.Translate(UpdatedVelocity());
         }
     }
 
@@ -35,13 +27,20 @@ public class PaddleMovement : MonoBehaviour {
             currVerticalVelocity = -movementSpeed;
 
             // Move the paddle
-            paddle.Translate(UpdatedVelocity());
+            transform.Translate(UpdatedVelocity());
         }
+    }
+
+    protected void StopMoving() {
+        currVerticalVelocity = 0;
+
+        // Move the paddle
+        transform.Translate(UpdatedVelocity());
     }
 
     private bool PaddleCollidedWithTop() {
         // Calculate the position of the top edge of the ball
-        float topEdge = paddle.position.y + (paddle.localScale.y / 2f);
+        float topEdge = transform.position.y + (transform.localScale.y / 2f);
         Vector2 topEdgePosition = new Vector2(0, topEdge);
 
         // Return true if the screen position of the ball is at the top
@@ -50,7 +49,7 @@ public class PaddleMovement : MonoBehaviour {
 
     private bool PaddleCollidedWithBottom() {
         // Calculate the position of the top edge of the ball
-        float bottomEdge = paddle.position.y - (paddle.localScale.y / 2f);
+        float bottomEdge = transform.position.y - (transform.localScale.y / 2f);
         Vector2 bottomEdgePosition = new Vector2(0, bottomEdge);
 
         // Return true if the screen position of the ball is at the top

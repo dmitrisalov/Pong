@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Basic_Game.unity
     guid: 123cce39d0d9bbd42a8fa345db74f99c
+  - enabled: 1
+    path: Assets/Scenes/Ball_Mode.unity
+    guid: 743781b7c35201943ba9a0ad431a127c
+  - enabled: 1
+    path: Assets/Scenes/About_Page.unity
+    guid: c46c376d0ee254f40aaad1ba269ecb41
   m_configObjects: {}
