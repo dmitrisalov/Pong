@@ -429,7 +429,7 @@ PrefabInstance:
     - target: {fileID: 7010467462076774805, guid: a93a542cccda03b42a5835b95509f1c9,
         type: 3}
       propertyPath: speedIncreaseFactor
-      value: 1.00025
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7010467462076774805, guid: a93a542cccda03b42a5835b95509f1c9,
         type: 3}
